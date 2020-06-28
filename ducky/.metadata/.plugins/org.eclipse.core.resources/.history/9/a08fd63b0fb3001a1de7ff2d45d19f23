@@ -1,0 +1,137 @@
+package edu.fa.model;
+
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+
+@Entity()//name: Dùng trong JPA query, 
+//bỏ sẽ lỗi vì: file cấu hình Hibernate đã trỏ tới class này để mapping với table "Course" trong DB
+//@Table(name = "Cours")//name; Dùng để đặt tên table trong DB, bỏ không sao => khi đó tên table DB = @Entity(name="")
+public class Course {
+	
+	@Id//Khóa chính trong java, mapping với khóa chính trong db
+	@GeneratedValue(strategy = GenerationType.AUTO )//Tự động tạo và gán giá trị cho khóa chính 
+	//=> phải khai báo thêm hàm tạo 1 t/số vì khi tạo đối tượng Course chỉ cần truyền tên, không cần truyền id
+	private int id;
+	
+	//Thêm @Column... để tránh lỗi khi convert từ kiểu String sang DB thành varchar, nhưng trong DB lại khai báo char
+	//khi khai báo thuộc tính "<property name="hbm2ddl.auto">validate</property>" trong file cấu hình hibernate
+	/* @Column(columnDefinition = "char") */
+	@Column(name = "Course_name")
+	private String name;
+	
+	@Temporal(TemporalType.DATE)//Kiểu insert vào cột createDate là "yyyy-MM-dd"
+	private Date createDate;
+	
+	//Giả sử một khóa học (Course) có các giáo trình (Syllabus)
+	//=> thuộc tính của Course là một class khác
+	/*
+	 * @Embedded//Để nhúng class Syllabus vào table Course private Syllabus
+	 * syllabus;
+	 */
+	
+	@ElementCollection(fetch = FetchType.EAGER)
+	//fetch = FetchType.LAZY: dạng mặc định(truy vấn trực tiếp DB);
+	//@ElementCollection: Dùng để insert một Collection(List<Syllabus>, Map<,>,..) vào class ánh xạ DB: Course.
+	//Mặc định nó sẽ khởi tạo một Collection theo cơ chế LAZY loading(truy vấn trực tiếp lần nữa từ DB) 
+	//khi get thuộc tính dạng collection ra
+	private List<Syllabus> syllabuses = new ArrayList<Syllabus>();
+	
+	/*
+	 * @Embedded private Syllabus onlineSyllabus;
+	 */
+	
+	public Course() {
+	}
+	
+	public Course( String name) {
+		this.name = name;
+		this.createDate = date;
+	}
+	
+	public Course( String name, Date date) {
+		this.name = name;
+		this.createDate = date;
+	}
+	
+	public Course(String name, Date createDate, List<Syllabus> syllabuses) {
+		super();
+		this.name = name;
+		this.createDate = createDate;
+		this.syllabuses = syllabuses;
+	}
+
+
+	/*
+	 * public Course(String name, Date createDate, Syllabus syllabus) { super();
+	 * this.name = name; this.createDate = createDate; this.syllabus = syllabus; }
+	 */
+
+	/*
+	 * public Course(String name) { this.name = name; }
+	 */
+	
+	/*
+	 * public Course(int id, String name) { super(); this.id = id; this.name = name;
+	 * }
+	 */
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public String toString() {
+		return "Course [id=" + id + ", name=" + name + "]";
+	}
+
+
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+
+
+	public List<Syllabus> getSyllabuses() {
+		return syllabuses;
+	}
+
+
+	public void setSyllabuses(List<Syllabus> syllabuses) {
+		this.syllabuses = syllabuses;
+	}
+
+//	public Syllabus getSyllabus() {
+//		return syllabus;
+//	}
+
+
+//	public void setSyllabus(Syllabus syllabus) {
+//		this.syllabus = syllabus;
+//	}
+	
+}

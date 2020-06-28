@@ -1,0 +1,5 @@
+package annguyen.hibernate.com.util;
+
+public class ConnectionUtil {
+
+}

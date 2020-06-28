@@ -1,0 +1,13 @@
+package annguyen.hibernate.com.dao;
+
+import org.hibernate.SessionFactory;
+
+public class ConnectionUtil {
+	private SessionFactory sessionFactory = null;
+	
+	public static SessionFactory getSessionFactory() {
+		if( sessionFactory == null ) {
+			
+		}
+	}
+}

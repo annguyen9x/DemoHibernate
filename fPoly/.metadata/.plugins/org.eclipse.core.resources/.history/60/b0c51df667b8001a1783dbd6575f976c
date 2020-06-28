@@ -1,0 +1,5 @@
+package annguyen.hibernate.com.model;
+
+public class KhachHang {
+
+}

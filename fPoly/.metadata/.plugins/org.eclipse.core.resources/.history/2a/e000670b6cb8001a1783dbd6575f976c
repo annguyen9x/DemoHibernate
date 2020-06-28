@@ -1,0 +1,5 @@
+package annguyen.hibernate.com.dao;
+
+public class Util {
+
+}

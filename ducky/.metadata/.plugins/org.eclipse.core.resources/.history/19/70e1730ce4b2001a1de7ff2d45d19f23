@@ -1,0 +1,7 @@
+package edu.fa.model;
+
+public class Fresher {
+	private int id;
+	private String name;
+
+}

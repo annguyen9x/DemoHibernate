@@ -1,0 +1,5 @@
+package edu.fa;
+
+public class Uniconstants {
+	public static String NAME_QUERY_OF_GROUP = "nameQueryOfGroup";
+}

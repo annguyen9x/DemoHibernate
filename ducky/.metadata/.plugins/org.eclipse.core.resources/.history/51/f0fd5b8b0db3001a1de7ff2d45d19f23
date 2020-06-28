@@ -1,0 +1,64 @@
+package edu.fa.model;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+
+@Entity
+public class Fresher {
+	@Id//Tạo khóa chính và mapping với khóa chính trong Db
+	@GeneratedValue(strategy = GenerationType.AUTO)//Tự động tăng và gán giá trị cho khóa chính
+	private int id;
+	private String name;
+	
+	//Mỗi Fresher có một địa chỉ(Address): quan hệ 1-1
+	@OneToOne
+	private Address address;
+	
+	//Mỗi Fresher có thể học nhiều khóa học(Course)
+	List<Course> courses = new ArrayList<Course>();
+	
+	public Fresher() {
+	}
+	
+	public Fresher(String name, Address address) {
+		this.name = name;
+		this.address = address;
+	}
+
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public Address getAddress() {
+		return address;
+	}
+
+	public void setAddress(Address address) {
+		this.address = address;
+	}
+
+	public List<Course> getCourses() {
+		return courses;
+	}
+
+	public void setCourses(List<Course> courses) {
+		this.courses = courses;
+	}
+	
+}

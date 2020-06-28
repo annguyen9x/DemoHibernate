@@ -1,0 +1,94 @@
+package annguyen.hibernate.com;
+
+import java.util.List;
+import java.util.Random;
+
+import annguyen.hibernate.com.dao.KhachHangDao;
+import annguyen.hibernate.com.model.KhachHang;
+
+public class QuanLyKhachHang {
+	private static Random random = new Random();
+
+	public static void main(String[] args) {
+		
+		//Đề ra: 
+		//1. Lấy danh sách khách hàng
+		List<KhachHang> khachHangs = KhachHangDao.getListKhachHang();
+		if( khachHangs != null ) {
+			System.out.println("\n********* Danh sách khách hàng *********\n");
+			for( int i = 0; i < khachHangs.size(); i++) {
+				System.out.println(i + " : " + khachHangs.get(i));
+			}
+		}
+		else {
+			System.out.println("Danh sách khách hàng NULL !");
+		}
+		
+		//2. Lấy thông tin một khách hàng
+		String maKhachHang = "KH01";
+		KhachHang khachHang = KhachHangDao.getKhachHang(maKhachHang);
+		if( khachHang != null ) {
+			System.out.println("\nKhách hàng có MaKhachHang= " + maKhachHang +" là:\n " + khachHang);
+		}
+		else {
+			System.out.println("\nKhông tìm thấy khách hàng có MaKhachHang= " + maKhachHang);
+		}
+		
+		//3. Thêm thông tin một khách hàng 
+		int numberRdInsert = random.nextInt(10);
+		String maKhachHangInsert = "KH0" + numberRdInsert;
+		KhachHang khachHangInsert = new KhachHang(maKhachHangInsert, "123456", "Hồ Văn Thêm", "hvthem" + maKhachHangInsert + "@gmail.com", "0987654321");
+		System.out.println("************* Insert KhachHang *************");
+		System.out.println("Insert khách hàng có MaKhachHang = " + maKhachHangInsert);
+		boolean isInsert = KhachHangDao.insertKhachHang(khachHangInsert);
+		if( isInsert == true ) {
+			System.out.println("Inset thành công, danh sách khách hàng sau khi Insert, Danh sách khách hàng sau khi Insert:\n");
+			List<KhachHang> khachHangsAfterInsert = KhachHangDao.getListKhachHang();
+			for( int i = 0; i < khachHangsAfterInsert.size(); i++) {
+				System.out.println(i + " : " + khachHangsAfterInsert.get(i));
+			}
+		}
+		else {
+			System.out.println("Inset thất bại !");
+		}
+		
+		//4. Cập nhật thông tin khách hàng
+		int numberRdUpdate = random.nextInt(9);
+		String maKhachHangUpdate = "KH0" + numberRdUpdate;
+		KhachHang khachHangUpdate = new KhachHang(maKhachHangUpdate, "123456", "Lê Bá Sửa " + maKhachHangUpdate, "hvthem" + maKhachHangUpdate + "@gmail.com", "0987654321");
+		System.out.println("************* Update KhachHang *************");
+		System.out.println("Update khách hàng có MaKhachHang = " + maKhachHangUpdate);
+		
+		boolean isUpdate = KhachHangDao.updateKhachHang(khachHangUpdate);
+		if( isUpdate == true ) {
+			System.out.println("Update thành công, danh sách Khách Hàng sau Update :\n");
+			List<KhachHang> khachHangsAfterUpdate = KhachHangDao.getListKhachHang();
+			for( int i = 0; i < khachHangsAfterUpdate.size(); i++) {
+				System.out.println(i + " : " + khachHangsAfterUpdate.get(i));
+			}
+		}
+		else {
+			System.out.println("\nUpdate thất bại !");
+		}
+		
+		//5. Xóa thông tin khách hàng
+		int numberRdDelete = random.nextInt(5);
+		String maKhachHangDelete = "KH0" + numberRdDelete;
+		System.out.println("************* Delete KhachHang *************");
+		System.out.println("Delete khách hàng có MaKhachHang = " + maKhachHangDelete);
+		
+		boolean isDelete = KhachHangDao.updateKhachHang(khachHangUpdate);
+		if( isUpdate == true ) {
+			System.out.println("Update thành công, danh sách Khách Hàng sau Update :\n");
+			List<KhachHang> khachHangsAfterUpdate = KhachHangDao.getListKhachHang();
+			for( int i = 0; i < khachHangsAfterUpdate.size(); i++) {
+				System.out.println(i + " : " + khachHangsAfterUpdate.get(i));
+			}
+		}
+		else {
+			System.out.println("\nUpdate thất bại !");
+		}
+		
+	}
+
+}

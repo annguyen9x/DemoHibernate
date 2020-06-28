@@ -1,0 +1,154 @@
+package annguyen.hibernate.com.dao;
+
+import java.util.List;
+
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
+
+
+import annguyen.hibernate.com.model.KhachHang;
+import annguyen.hibernate.com.util.ConnectionUtil;
+
+public class KhachHangDao {
+	private static SessionFactory sessionFactory;
+	private static Session session;
+	
+	//1. Lấy danh sách khách hàng
+	public static List<KhachHang> getListKhachHang(){
+		List<KhachHang> khachHangs = null;
+		sessionFactory = ConnectionUtil.getSessionFactory();
+		try {
+			session = (Session) sessionFactory.openSession();
+			session.beginTransaction();
+			//C1: Truy vấn bằng Criteria
+			//Criteria chủ yếu dùng để đọc dữ liệu từ DB, 
+			//Criteria dễ thay đổi, mở rộng hơn HQL ( Dễ thêm các đk truy vấn OR, AND, IN, .. hơn HQL)
+			Criteria criteria = (Criteria)session.createCriteria(KhachHang.class);
+			khachHangs = criteria.list();
+			
+			//C2: Truy vấn bằng HQL
+//			Query query = session.createQuery("FROM KhachHang");
+//			khachHangs = query.list();
+		} catch (Exception e) {
+			session.getTransaction().rollback();
+			System.out.println("getListKhachHang-err: " + e.toString());
+		}finally {
+			session.close();
+			//Đóng tài nguyên sessionFactory (gồm Session, connection DB,..)
+			//sessionFactory.close();
+		}
+		return khachHangs;
+	}
+	
+	//2. Lấy thông tin một khách hàng
+	public static KhachHang getKhachHang(String maKhachHang) {
+		KhachHang khachHang = null;
+		sessionFactory = ConnectionUtil.getSessionFactory();
+		try {
+			session = sessionFactory.openSession();
+			session.beginTransaction();
+			//C1: Truy vấn bằng Criteria
+			Criteria criteria = session.createCriteria(KhachHang.class);
+			//Bắt buộc "maKhachHang" đặt theo tên thuộc tính của Class, không đặt theo tên cột trong DB "MaKhachHang"
+			criteria.add(Restrictions.eq("maKhachHang", maKhachHang));
+			khachHang = (KhachHang) criteria.list().get(0);
+			
+			//C2: Truy vấn bằng HQL
+			//Điều kiện so sánh Where "maKhachHang" theo thuộc tính class hay "MaKhachHang" theo DB đều được
+//			Query query = session.createQuery("FROM KhachHang WHERE MaKhachHang = :MaKH");
+//			query.setParameter("MaKH", maKhachHang);
+//			khachHang = (KhachHang) query.list().get(0);
+			
+			//C3: CRUD (4 Option Cơ Bản trong HQL)
+//			khachHang = (KhachHang) session.get(KhachHang.class, maKhachHang);
+		} catch (Exception e) {
+			session.getTransaction().rollback();
+			System.out.println("getKhachHang-err: " + e.toString());
+		}finally {
+			session.close();
+			//Đóng tài nguyên sessionFactory (gồm Session, connection DB,..)
+			//sessionFactory.close();
+		}
+		return khachHang;
+	}
+	
+	//3. Thêm thông tin một khách hàng
+	public static boolean insertKhachHang(KhachHang khachHang) {
+		//Kiểm tra xem thông tin Khách Hàng có trong DB chưa
+		if( getKhachHang(khachHang.getMaKhachHang()) != null ) {
+			System.out.println("Zô 1");
+			return false;
+		}
+		else {
+			System.out.println("Zô 2");
+			sessionFactory = ConnectionUtil.getSessionFactory();
+			try {
+				session = sessionFactory.openSession();
+				session.beginTransaction();
+					
+				//Cách: CRUD (4 Option Cơ Bản trong HQL)
+				session.save(khachHang);
+				session.getTransaction().commit();
+			} catch (Exception e) {
+				session.getTransaction().rollback();
+				System.out.println("insertKhachHang-err: " + e.toString());
+				return false;
+			}finally {
+				session.close();
+				//Đóng tài nguyên sessionFactory (gồm Session, connection DB,..)
+				//sessionFactory.close();
+			}
+		}
+		
+		return true;
+	}
+	
+	//4. Cập nhật thông tin khách hàng
+	public static int updateKhachHang(KhachHang khachHang) {
+		int rows = 0;
+		sessionFactory = ConnectionUtil.getSessionFactory();
+		try {
+			session = sessionFactory.openSession();
+			session.beginTransaction();
+			
+			//C1: Update bằng HQL
+			//Điều kiện so sánh Where "maKhachHang" theo thuộc tính class hay "MaKhachHang" theo DB đều được, khác Criteria
+			Query query = session.createQuery("Update KhachHang Set MatKhau = :matKhau, hoVaTen = :hovaten, Email = :emal, DienThoai = :dt"
+					+ " WHERE MaKhachHang = :maKH");
+			query.setParameter("matKhau", khachHang.getMatKhau());
+			query.setParameter("hovaten", khachHang.getHoVaten());
+			query.setParameter("emal", khachHang.getEmail());
+			query.setParameter("dt", khachHang.getDienThoai());
+			query.setParameter("maKH", khachHang.getMaKhachHang());
+
+			rows = query.executeUpdate();
+			
+			
+			//C2: CRUD (4 Option Cơ Bản trong HQL)
+			KhachHang khachHangDB = (KhachHang)session.get(KhachHang.class, khachHang.getMaKhachHang());
+			khachHangDB.setMatKhau(khachHang.getMatKhau());
+			khachHangDB.setHoVaten(khachHang.getHoVaten());
+			khachHangDB.setEmail(khachHang.getEmail());
+			khachHangDB.setDienThoai(khachHang.getDienThoai());
+			
+			session.save(khachHangDB);
+			
+			session.getTransaction().commit();
+			
+		} catch (Exception e) {
+			session.getTransaction().rollback();
+			System.out.println("getKhachHang-err: " + e.toString());
+		}finally {
+			session.close();
+			//Đóng tài nguyên sessionFactory (gồm Session, connection DB,..)
+			//sessionFactory.close();
+		}
+		return rows;
+	}
+	
+	//5. Xóa thông tin khách hàng
+	
+}

@@ -1,0 +1,8 @@
+package annguyen.hibernate.com.model;
+
+import javax.persistence.Entity;
+
+@Entity
+public class KhachHang {
+	
+}

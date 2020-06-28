@@ -1,0 +1,28 @@
+package annguyen.hibernate.com.model;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
+public class KhachHang {
+	@Id
+	private String maKhachHang;
+	private String matKhau;
+	private String hoVaten;
+	private String Email;
+	private String dienThoai;
+	
+	public KhachHang() {
+	}
+
+	public KhachHang(String maKhachHang, String matKhau, String hoVaten, String email, String dienThoai) {
+		super();
+		this.maKhachHang = maKhachHang;
+		this.matKhau = matKhau;
+		this.hoVaten = hoVaten;
+		Email = email;
+		this.dienThoai = dienThoai;
+	}
+	
+	
+}
