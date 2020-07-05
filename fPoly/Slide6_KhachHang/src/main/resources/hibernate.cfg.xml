@@ -16,7 +16,8 @@
 		<property name="connection.password">123456</property>
 		<!-- End: Database connection settings -->
 		
-		<!-- Begin: Mapping model class with Table DB -->
+		<!-- Begin: Mapping model class with Table DB, tương đương component-scan trong Spring Data???
+		=> Khác vì Spring data load đến @Controller còn ở đây load đến @Entityt -->
 		<mapping class="annguyen.hibernate.com.model.KhachHang" />
 		<!-- End: Mapping model class with Table DB -->
 	</session-factory>
